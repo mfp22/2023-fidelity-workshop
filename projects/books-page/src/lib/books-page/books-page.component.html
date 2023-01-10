@@ -18,16 +18,16 @@
 
         <bco-books-list
           [books]="books$ | async"
-          (select)="onSelectBook($event)"
-          (delete)="onDeleteBook($event)"
+          (select)="store.setActiveBookId($event.id)"
+          (delete)="delete$.next($event.id)"
         ></bco-books-list>
       </div>
 
       <bco-book-detail
         class="col-50"
         [book]="currentBook$ | async"
-        (save)="onSave($event)"
-        (cancel)="onCancel()"
+        (save)="save$.next($event)"
+        (cancel)="store.resetActiveBookId()"
       >
       </bco-book-detail>
     </div>

@@ -7,12 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
-import { EffectsModule } from '@ngrx/effects';
-import { SharedStateAuthModule } from '@book-co/shared-state-auth';
 import { UserDropdownComponent } from './user-dropdown/user-dropdown.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginPageComponent } from './login-page/login-page.component';
-import { AuthEffects } from './auth.effects';
 
 @NgModule({
   imports: [
@@ -24,8 +21,6 @@ import { AuthEffects } from './auth.effects';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatInputModule,
-    EffectsModule.forFeature([AuthEffects]),
-    SharedStateAuthModule,
   ],
   declarations: [UserDropdownComponent, LoginFormComponent, LoginPageComponent],
   exports: [UserDropdownComponent, LoginPageComponent],

@@ -1,14 +1,6 @@
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import {
-  selectAuthGettingStatus,
-  selectAuthUser,
-  selectAuthError,
-} from '@book-co/shared-state-auth';
-import { UserModel } from '@book-co/shared-models';
+import { Component, inject } from '@angular/core';
+import { AuthStore } from '@book-co/shared-state-auth';
 import { LoginPageActions } from '@book-co/auth/actions';
-import { LoginEvent } from '../login-form/login-form.component';
 
 @Component({
   selector: 'bco-login-page',
@@ -16,19 +8,11 @@ import { LoginEvent } from '../login-form/login-form.component';
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  gettingStatus$: Observable<boolean>;
-  user$: Observable<UserModel | null>;
-  error$: Observable<string | null>;
+  store = inject(AuthStore);
 
-  constructor(private store: Store) {
-    this.gettingStatus$ = store.select(selectAuthGettingStatus);
-    this.user$ = store.select(selectAuthUser);
-    this.error$ = store.select(selectAuthError);
-  }
+  gettingStatus$ = this.store.gettingStatus$;
+  user$ = this.store.user$;
+  error$ = this.store.error$;
 
-  onLogin($event: LoginEvent) {
-    this.store.dispatch(
-      LoginPageActions.login($event.username, $event.password)
-    );
-  }
+  login$ = LoginPageActions.login$;
 }

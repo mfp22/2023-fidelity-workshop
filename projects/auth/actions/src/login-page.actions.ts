@@ -1,10 +1,5 @@
-import { createAction } from '@ngrx/store';
+import { Source } from '@state-adapt/rxjs';
+import { LoginEvent } from 'projects/auth/src/lib/login-form/login-form.component';
 
-export const enter = createAction('[Login Page] Enter');
-export const login = createAction(
-  '[Login Page] Login',
-  (username: string, password: string) => ({
-    username,
-    password,
-  })
-);
+export const enter$ = new Source<void>('enter$');
+export const login$ = new Source<LoginEvent>('login$');

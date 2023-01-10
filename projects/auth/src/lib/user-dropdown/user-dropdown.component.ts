@@ -1,9 +1,6 @@
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UserModel } from '@book-co/shared-models';
-import { Store } from '@ngrx/store';
-import { selectAuthUser } from '@book-co/shared-state-auth';
+import { Component, inject } from '@angular/core';
 import { UserDropdownActions } from '@book-co/auth/actions';
+import { AuthStore } from '@book-co/shared-state-auth';
 
 @Component({
   selector: 'bco-user-dropdown',
@@ -11,13 +8,9 @@ import { UserDropdownActions } from '@book-co/auth/actions';
   styleUrls: ['./user-dropdown.component.scss'],
 })
 export class UserDropdownComponent {
-  user$: Observable<UserModel | null>;
+  store = inject(AuthStore);
 
-  constructor(private store: Store) {
-    this.user$ = store.select(selectAuthUser);
-  }
+  user$ = this.store.user$;
 
-  onLogout() {
-    this.store.dispatch(UserDropdownActions.logout());
-  }
+  logout$ = UserDropdownActions.logout$;
 }

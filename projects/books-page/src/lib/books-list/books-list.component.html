@@ -7,8 +7,8 @@
     <div class="spacer"></div>
 
     <mat-button-toggle-group
-      [value]="booksListStore.sortOrder$ | async"
-      (change)="booksListStore.setSortOrder($event.value)"
+      [value]="store.sortOrder$ | async"
+      (change)="store.setSortOrder($event.value)"
       aria-label="Sort By"
     >
       <mat-button-toggle value="name">

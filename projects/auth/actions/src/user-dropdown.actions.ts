@@ -1,3 +1,3 @@
-import { createAction } from '@ngrx/store';
+import { Source } from '@state-adapt/rxjs';
 
-export const logout = createAction('[User Dropdown] Logout');
+export const logout$ = new Source<void>('logout$');

@@ -1,6 +1,5 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { EffectsModule } from '@ngrx/effects';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,8 +7,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { StoreModule } from '@ngrx/store';
+import { defaultStoreProvider } from '@state-adapt/angular';
 import { AppComponent } from './app.component';
 import { AuthModule } from '@book-co/auth';
 
@@ -34,15 +32,10 @@ import { AuthModule } from '@book-co/auth';
         redirectTo: 'books',
       },
     ]),
-    StoreModule.forRoot({}),
-    StoreDevtoolsModule.instrument({
-      maxAge: 15,
-    }),
-    EffectsModule.forRoot([]),
     HttpClientModule,
     AuthModule,
   ],
-  providers: [],
+  providers: [defaultStoreProvider],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

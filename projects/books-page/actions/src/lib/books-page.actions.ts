@@ -1,28 +1,14 @@
-import { createAction, props } from '@ngrx/store';
-import { BookRequiredProps } from '@book-co/shared-models';
+import {
+  BookModel,
+  BookRequiredProps,
+  isBookModel,
+} from '@book-co/shared-models';
+import { Action } from '@state-adapt/core';
+import { Source } from '@state-adapt/rxjs';
 
-export const enter = createAction('[Books Page] Enter');
+export const saveBook$ = new Source<BookRequiredProps | BookModel>('saveBook$');
+export const deleteBook$ = new Source<string>('deleteBook$');
 
-export const selectBook = createAction(
-  '[Books Page] Select Book',
-  props<{ bookId: string }>()
-);
-
-export const clearSelectedBook = createAction(
-  '[Books Page] Clear Selected Book'
-);
-
-export const createBook = createAction(
-  '[Books Page] Create Book',
-  props<{ book: BookRequiredProps }>()
-);
-
-export const updateBook = createAction(
-  '[Books Page] Update Book',
-  props<{ bookId: string; changes: BookRequiredProps }>()
-);
-
-export const deleteBook = createAction(
-  '[Books Page] Delete Book',
-  props<{ bookId: string }>()
-);
+export function isBookModelAction(action: any): action is Action<BookModel> {
+  return isBookModel(action.payload);
+}

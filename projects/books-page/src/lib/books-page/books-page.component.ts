@@ -1,71 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Component, inject } from '@angular/core';
 import { BooksPageActions } from '@book-co/books-page/actions';
-import { BookModel, BookRequiredProps } from '@book-co/shared-models';
-import {
-  selectIsLoadingBooks,
-  selectLoadingBooksError,
-  selectAllBooks,
-  selectActiveBook,
-  selectBooksEarningsTotals,
-} from '@book-co/shared-state-books';
+import { BooksStore } from '@book-co/shared-state-books';
 
 @Component({
   selector: 'bco-books-page',
   templateUrl: './books-page.component.html',
   styleUrls: ['./books-page.component.scss'],
 })
-export class BooksPageComponent implements OnInit {
-  isLoading$: Observable<boolean>;
-  error$: Observable<object | null>;
-  books$: Observable<BookModel[]>;
-  currentBook$: Observable<BookModel | null>;
-  total$: Observable<number>;
+export class BooksPageComponent {
+  store = inject(BooksStore);
 
-  constructor(private store: Store) {
-    this.isLoading$ = this.store.select(selectIsLoadingBooks);
-    this.error$ = this.store.select(selectLoadingBooksError);
-    this.books$ = store.select(selectAllBooks);
-    this.currentBook$ = store.select(selectActiveBook);
-    this.total$ = store.select(selectBooksEarningsTotals);
-  }
+  isLoading$ = this.store.isLoading$;
+  error$ = this.store.error$;
+  books$ = this.store.booksAll$;
+  currentBook$ = this.store.activeBook$;
+  total$ = this.store.earningsTotals$;
 
-  ngOnInit() {
-    this.store.dispatch(BooksPageActions.enter());
-  }
-
-  onCancel() {
-    this.removeSelectedBook();
-  }
-
-  removeSelectedBook() {
-    this.store.dispatch(BooksPageActions.clearSelectedBook());
-  }
-
-  onSelectBook(book: BookModel) {
-    this.store.dispatch(BooksPageActions.selectBook({ bookId: book.id }));
-  }
-
-  onDeleteBook(book: BookModel) {
-    this.store.dispatch(BooksPageActions.deleteBook({ bookId: book.id }));
-  }
-
-  onSave(book: BookRequiredProps | BookModel) {
-    if ('id' in book) {
-      this.updateBook(book);
-    } else {
-      this.saveBook(book);
-    }
-  }
-
-  saveBook(bookProps: BookRequiredProps) {
-    this.store.dispatch(BooksPageActions.createBook({ book: bookProps }));
-  }
-
-  updateBook(book: BookModel) {
-    this.store.dispatch(
-      BooksPageActions.updateBook({ bookId: book.id, changes: book })
-    );
-  }
+  delete$ = BooksPageActions.deleteBook$;
+  save$ = BooksPageActions.saveBook$;
 }

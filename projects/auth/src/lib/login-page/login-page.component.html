@@ -7,7 +7,7 @@
   <ng-template #loginForm>
     <bco-login-form
       [error]="error$ | async"
-      (login)="onLogin($event)"
+      (login)="login$.next($event)"
     ></bco-login-form>
   </ng-template>
 </ng-template>

@@ -9,6 +9,9 @@ export type BookRequiredProps = Pick<
   BookModel,
   'name' | 'earnings' | 'description'
 >;
+export function isBookModel(obj: any): obj is BookModel {
+  return obj && obj.id && obj.name && obj.earnings;
+}
 export type BookSortOrder = 'asc' | 'dsc';
 export type BookSortProp = 'name' | 'earnings';
 

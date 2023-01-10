@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { BookModel } from '@book-co/shared-models';
 import { BooksListStore } from './books-list.store';
 
@@ -6,12 +6,10 @@ import { BooksListStore } from './books-list.store';
   selector: 'bco-books-list',
   templateUrl: './books-list.component.html',
   styleUrls: ['./books-list.component.scss'],
-  providers: [BooksListStore],
 })
 export class BooksListComponent {
   @Input() books: BookModel[] | null = [];
   @Output() select = new EventEmitter();
   @Output() delete = new EventEmitter();
-
-  constructor(readonly booksListStore: BooksListStore) {}
+  store = inject(BooksListStore);
 }

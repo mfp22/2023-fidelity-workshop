@@ -1,3 +1,16 @@
 {
-  "books": []
+  "books": [
+    {
+      "id": "2cd21a69-b255-4c7d-8881-d4a96ec946c0",
+      "name": "Book 1",
+      "earnings": "5000",
+      "description": "A book that came first"
+    },
+    {
+      "id": "b7fbea52-1c02-4c8a-b815-4a3743198a52",
+      "name": "Book 2",
+      "earnings": "6000",
+      "description": "A book that came second"
+    }
+  ]
 }

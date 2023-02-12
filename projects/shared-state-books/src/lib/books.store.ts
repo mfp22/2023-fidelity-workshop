@@ -5,7 +5,7 @@ import { BooksService } from '@book-co/shared-services';
 import { adapt } from '@state-adapt/angular';
 import { getAction } from '@state-adapt/core';
 import { createEntityState } from '@state-adapt/core/adapters';
-import { Source, getHttpSources, toSource } from '@state-adapt/rxjs';
+import { Source, getRequestSources, toSource } from '@state-adapt/rxjs';
 import { concatMap, filter, map } from 'rxjs/operators';
 import { State, adapter } from './books.adapter';
 
@@ -21,11 +21,7 @@ export const BooksStore = new InjectionToken('BooksStore', {
   factory: () => {
     const booksService = inject(BooksService);
 
-    const booksRequest = getHttpSources('books', booksService.all(), (res) => [
-      true,
-      res,
-      null,
-    ]);
+    const booksRequest = getRequestSources(booksService.all(), 'books');
 
     const bookCreated$ = BooksPageActions.saveBook$.pipe(
       filter(({ payload }) => !('id' in payload)),
@@ -52,7 +48,7 @@ export const BooksStore = new InjectionToken('BooksStore', {
 
     return adapt(['books', initialState, adapter], {
       receiveBooks: booksRequest.success$,
-      receiveError: booksRequest.error$ as Source<object | null>,
+      receiveError: booksRequest.error$,
       addBook: bookCreated$,
       updateBook: bookUpdated$ as Source<[string, BookModel]>,
       removeBooksOne: bookDeleted$,

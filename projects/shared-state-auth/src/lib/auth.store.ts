@@ -8,8 +8,8 @@ import { AuthService } from '@book-co/shared-services';
 import { concatMap, tap } from 'rxjs/operators';
 import {
   Source,
-  getHttpActions,
-  splitHttpSources,
+  splitRequestSources,
+  toRequestSource,
   toSource,
 } from '@state-adapt/rxjs';
 
@@ -60,15 +60,13 @@ export const AuthStore = new InjectionToken('AuthStore', {
 
     const user$ = auth.getStatus().pipe(toSource('user$'));
 
-    const login = LoginPageActions.login$.pipe(
+    const login$ = LoginPageActions.login$.pipe(
       concatMap(({ payload }) =>
-        getHttpActions(
-          auth.login(payload.username, payload.password),
-          (user) => [true, user, 'null']
-        )
-      )
+        auth.login(payload.username, payload.password)
+      ),
+      toRequestSource('auth')
     );
-    const loginRequest = splitHttpSources('auth', login);
+    const loginRequest = splitRequestSources(login$, 'auth');
 
     const logoutSuccess$ = UserDropdownActions.logout$.pipe(
       tap(() => auth.logout()),

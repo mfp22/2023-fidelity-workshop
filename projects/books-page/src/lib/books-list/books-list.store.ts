@@ -26,6 +26,8 @@ const initialState: State = {
   sortOrder: 'asc',
   sortProp: 'name',
 };
+// https://state-adapt.github.io/docs/core#createadapter
+// https://state-adapt.github.io/docs/core#joinadapters
 const adapter = joinAdapters<State>()({
   sortOrder: createAdapter<BookSortOrder>()({}),
   sortProp: createAdapter<BookSortProp>()({}),

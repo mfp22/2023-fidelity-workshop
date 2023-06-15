@@ -7,7 +7,6 @@ import { LoginPageActions, UserDropdownActions } from '@book-co/auth/actions';
 import { AuthService } from '@book-co/shared-services';
 import { concatMap, tap } from 'rxjs/operators';
 import {
-  Source,
   splitRequestSources,
   toRequestSource,
   toSource,
@@ -25,6 +24,7 @@ const initialState: State = {
   error: null,
 };
 
+// https://state-adapt.github.io/docs/core#createadapter
 export const adapter = createAdapter<State>()({
   logOut: () => ({
     gettingStatus: false,
@@ -58,27 +58,28 @@ export const AuthStore = new InjectionToken('AuthStore', {
   factory: () => {
     const auth = inject(AuthService);
 
-    const user$ = auth.getStatus().pipe(toSource('user$'));
+    const user$ = auth.getStatus().pipe(toSource('user$')); // https://state-adapt.github.io/docs/rxjs#tosource
 
     const login$ = LoginPageActions.login$.pipe(
       concatMap(({ payload }) =>
         auth.login(payload.username, payload.password)
       ),
-      toRequestSource('auth')
+      toRequestSource('auth') // https://state-adapt.github.io/docs/rxjs#torequestsource
     );
-    const loginRequest = splitRequestSources('auth', login$);
+    const loginRequest = splitRequestSources('auth', login$); // https://state-adapt.github.io/docs/rxjs#splitrequestsources
 
     const logoutSuccess$ = UserDropdownActions.logout$.pipe(
       tap(() => auth.logout()),
-      toSource('logoutSuccess$')
-    ) as Source<any>;
+      toSource('logoutSuccess$') // https://state-adapt.github.io/docs/rxjs#tosource
+    );
 
+    // https://state-adapt.github.io/angular/docs/angular#adapt
     return adapt(['auth', initialState, adapter], {
       logIn: LoginPageActions.login$,
       logOut: UserDropdownActions.logout$,
       receiveUser: [user$, loginRequest.success$],
       receiveError: loginRequest.error$,
       noop: logoutSuccess$,
-    } as any);
+    });
   },
 });

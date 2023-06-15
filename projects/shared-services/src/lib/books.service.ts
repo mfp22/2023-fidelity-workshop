@@ -14,7 +14,7 @@ const HEADER = {
 export class BooksService {
   constructor(private http: HttpClient) {}
 
-  all() {
+  fetchAll() {
     return this.http.get<BookModel[]>(BASE_URL);
   }
 

@@ -35,7 +35,7 @@ import { AuthModule } from '@book-co/auth';
     HttpClientModule,
     AuthModule,
   ],
-  providers: [defaultStoreProvider],
+  providers: [defaultStoreProvider], // https://state-adapt.github.io/angular/docs/angular#defaultstoreprovider
   bootstrap: [AppComponent],
 })
 export class AppModule {}

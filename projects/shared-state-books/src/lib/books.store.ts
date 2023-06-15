@@ -21,20 +21,26 @@ export const BooksStore = new InjectionToken('BooksStore', {
   factory: () => {
     const booksService = inject(BooksService);
 
-    const booksRequest = getRequestSources('books', booksService.all());
+    // https://state-adapt.github.io/docs/rxjs#getrequestsources
+    const booksRequestSources = getRequestSources(
+      'books',
+      booksService.fetchAll()
+    );
 
     const bookCreated$ = BooksPageActions.saveBook$.pipe(
       filter(({ payload }) => !('id' in payload)),
       concatMap(({ payload }) => booksService.create(payload)),
+      // https://state-adapt.github.io/docs/rxjs#tosource
       toSource('bookCreated$')
     );
 
     const bookUpdated$ = BooksPageActions.saveBook$.pipe(
       filter(BooksPageActions.isBookModelAction),
-      concatMap(({ payload }) =>
-        booksService
-          .update(payload.id, payload)
-          .pipe(map((book) => getAction('bookUpdated$', [book.id, book])))
+      concatMap(
+        ({ payload }) =>
+          booksService
+            .update(payload.id, payload)
+            .pipe(map((book) => getAction('bookUpdated$', [book.id, book]))) // https://state-adapt.github.io/docs/core#getaction
       )
     );
 
@@ -42,15 +48,17 @@ export const BooksStore = new InjectionToken('BooksStore', {
       concatMap(({ payload }) =>
         booksService
           .delete(payload)
+          // https://state-adapt.github.io/docs/core#getaction
           .pipe(map(() => getAction('bookDeleted$', payload)))
       )
     );
 
+    // https://state-adapt.github.io/angular/docs/angular#adapt
     return adapt(['books', initialState, adapter], {
-      receiveBooks: booksRequest.success$,
-      receiveError: booksRequest.error$,
+      receiveBooks: booksRequestSources.success$,
+      receiveError: booksRequestSources.error$,
       addBook: bookCreated$,
-      updateBook: bookUpdated$ as Source<[string, BookModel]>,
+      updateBook: bookUpdated$ as Source<[string, BookModel]>, // https://state-adapt.github.io/docs/rxjs#source
       removeBooksOne: bookDeleted$,
     });
   },

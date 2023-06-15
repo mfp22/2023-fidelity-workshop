@@ -66,7 +66,7 @@ export const AuthStore = new InjectionToken('AuthStore', {
       ),
       toRequestSource('auth')
     );
-    const loginRequest = splitRequestSources(login$, 'auth');
+    const loginRequest = splitRequestSources('auth', login$);
 
     const logoutSuccess$ = UserDropdownActions.logout$.pipe(
       tap(() => auth.logout()),

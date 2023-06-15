@@ -21,7 +21,7 @@ export const BooksStore = new InjectionToken('BooksStore', {
   factory: () => {
     const booksService = inject(BooksService);
 
-    const booksRequest = getRequestSources(booksService.all(), 'books');
+    const booksRequest = getRequestSources('books', booksService.all());
 
     const bookCreated$ = BooksPageActions.saveBook$.pipe(
       filter(({ payload }) => !('id' in payload)),

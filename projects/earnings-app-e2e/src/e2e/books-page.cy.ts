@@ -1,10 +1,5 @@
-import { BookModel, BookRequiredProps } from '@book-co/shared-models';
+import { BookModel } from '@book-co/shared-models';
 import * as uuid from 'uuid';
-import * as BooksApi from '../support/books.api';
-import * as AuthApi from '../support/auth.api';
-import * as BookListComponent from '../support/book-list-component.harness';
-import * as BookFormComponent from '../support/book-form-component.harness';
-import * as BooksPage from '../support/books-page.harness';
 
 describe('Books Page', () => {
   let book: BookModel;
@@ -18,16 +13,71 @@ describe('Books Page', () => {
         'The Lord of the Rings is an epic high fantasy novel written by English author and scholar J. R. R. Tolkien.',
     };
 
-    cy.visit('/');
+    // It's not a real login feature
+    const user = { id: uuid.v4(), username: 'testuser' };
+    localStorage.setItem('auth', JSON.stringify(user));
+
+    cy.visit('/books');
   });
 
-  it('should show a list all of the books', () => {});
+  afterEach(() => {
+    localStorage.removeItem('auth');
+    // write back original db.json
+    cy.exec('git checkout ../../db.json');
+  });
 
-  it('should gracefully show an error message when loading the books fails', () => {});
+  const findId = (selector: string, modifier: '^' | '$' | '' = '') =>
+    cy.get('bco-books-page').find(`[data-test-id${modifier}="${selector}"]`);
 
-  it('should let you create a book', () => {});
+  const getBookList = () => findId('book-', '^');
 
-  it('should let you edit a book', () => {});
+  it('should let you perform CRUD operations on books ', () => {
+    getBookList().should('have.length', 2);
 
-  it('should let you delete a book', () => {});
+    // Create
+    findId('nameInput').type(book.name);
+    findId('earningsInput').type(book.earnings);
+    findId('descriptionInput').type(book.description!);
+
+    findId('saveButton').click();
+    getBookList().should('have.length', 3).contains(book.name);
+
+    // Read
+    getBookList()
+      .contains(book.name)
+      .parent()
+      .find('[data-test-id="bookEditButton"]')
+      .click();
+    findId('nameInput').should('have.value', book.name);
+    findId('cancelButton').click();
+    findId('nameInput').should('have.value', '');
+
+    // Update
+    getBookList()
+      .contains(book.name)
+      .parent()
+      .find('[data-test-id="bookEditButton"]')
+      .click();
+    findId('nameInput').type(' Updated');
+    findId('saveButton').click();
+    getBookList().contains(book.name + ' Updated');
+
+    // Delete
+    getBookList()
+      .contains(book.name + ' Updated')
+      .parent()
+      .find('[data-test-id="bookDeleteButton"]')
+      .click();
+    getBookList().should('have.length', 2);
+  });
+
+  it('should gracefully show an error message when loading the books fails', () => {
+    cy.intercept('http://localhost:3000/books', { forceNetworkError: true }).as(
+      'failed'
+    );
+    cy.wait('@failed');
+    cy.get('bco-books-page').contains(
+      'An unexpected error occurred. Please try again.'
+    );
+  });
 });

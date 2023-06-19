@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { BooksPageActions } from '@book-co/books-page/actions';
-import { BooksStore } from '@book-co/shared-state-books';
+import { BooksSorted, BooksStore } from '@book-co/shared-state-books';
 
 @Component({
   selector: 'bco-books-page',
@@ -12,7 +12,7 @@ export class BooksPageComponent {
 
   isLoading$ = this.store.isLoading$;
   error$ = this.store.error$;
-  books$ = this.store.booksAll$;
+  books$ = inject(BooksSorted);
   currentBook$ = this.store.activeBook$;
   total$ = this.store.earningsTotals$;
 

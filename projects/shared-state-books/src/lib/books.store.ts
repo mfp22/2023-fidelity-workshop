@@ -1,13 +1,19 @@
-import { InjectionToken, inject } from '@angular/core';
+import { inject, InjectionToken } from '@angular/core';
 import { BooksPageActions } from '@book-co/books-page/actions';
-import { BookModel } from '@book-co/shared-models';
+import { BookModel, sortBooks } from '@book-co/shared-models';
 import { BooksService } from '@book-co/shared-services';
 import { adapt } from '@state-adapt/angular';
 import { getAction } from '@state-adapt/core';
 import { createEntityState } from '@state-adapt/core/adapters';
-import { Source, getRequestSources, toSource } from '@state-adapt/rxjs';
+import {
+  getRequestSources,
+  joinStores,
+  Source,
+  toSource,
+} from '@state-adapt/rxjs';
 import { concatMap, filter, map } from 'rxjs/operators';
-import { State, adapter } from './books.adapter';
+import { adapter, State } from './books.adapter';
+import { BooksListStore } from './books-list.store';
 
 export const initialState: State = {
   activeBookId: null,
@@ -61,5 +67,24 @@ export const BooksStore = new InjectionToken('BooksStore', {
       updateBook: bookUpdated$ as Source<[string, BookModel]>, // https://state-adapt.github.io/docs/rxjs#source
       removeBooksOne: bookDeleted$,
     });
+  },
+});
+
+export const BooksSorted = new InjectionToken('booksSorted$', {
+  providedIn: 'root',
+  factory: () => {
+    const joinedStore = joinStores({
+      booksStore: inject(BooksStore),
+      bookListStore: inject(BooksListStore),
+    })({
+      booksSorted: (s) =>
+        sortBooks(
+          s.bookListStoreSortOrder,
+          s.bookListStoreSortProp,
+          s.booksStoreBooksAll
+        ),
+    })();
+
+    return joinedStore.booksSorted$;
   },
 });

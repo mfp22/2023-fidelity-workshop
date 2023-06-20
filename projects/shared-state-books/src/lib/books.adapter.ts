@@ -1,9 +1,9 @@
 import { BookModel, calculateBooksGrossEarnings } from '@book-co/shared-models';
 import { createAdapter, joinAdapters } from '@state-adapt/core';
 import {
-  EntityState,
   booleanAdapter,
   createEntityAdapter,
+  EntityState,
 } from '@state-adapt/core/adapters';
 
 export interface State {

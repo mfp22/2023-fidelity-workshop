@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { BookModel } from '@book-co/shared-models';
-import { BooksListStore } from './books-list.store';
+import { BooksListStore } from '@book-co/shared-state-books';
 
 @Component({
   selector: 'bco-books-list',

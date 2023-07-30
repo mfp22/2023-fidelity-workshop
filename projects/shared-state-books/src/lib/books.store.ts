@@ -2,7 +2,7 @@ import { InjectionToken, inject } from '@angular/core';
 import { BooksPageActions } from '@book-co/books-page/actions';
 import { BookModel } from '@book-co/shared-models';
 import { BooksService } from '@book-co/shared-services';
-import { adapt } from '@state-adapt/angular';
+import { adapt, adaptInjectable } from '@state-adapt/angular';
 import { getAction } from '@state-adapt/core';
 import { createEntityState } from '@state-adapt/core/adapters';
 import { Source, getRequestSources, toSource } from '@state-adapt/rxjs';
@@ -16,9 +16,10 @@ export const initialState: State = {
   books: createEntityState(),
 };
 
-export const BooksStore = new InjectionToken('BooksStore', {
-  providedIn: 'root',
-  factory: () => {
+// https://state-adapt.github.io/angular/docs/angular#adaptinjectable
+export const injectBooksStore = adaptInjectable(
+  ['books', initialState, adapter],
+  () => {
     const booksService = inject(BooksService);
 
     // https://state-adapt.github.io/docs/rxjs#getrequestsources
@@ -53,13 +54,12 @@ export const BooksStore = new InjectionToken('BooksStore', {
       )
     );
 
-    // https://state-adapt.github.io/angular/docs/angular#adapt
-    return adapt(['books', initialState, adapter], {
+    return {
       receiveBooks: booksRequestSources.success$,
       receiveError: booksRequestSources.error$,
       addBook: bookCreated$,
       updateBook: bookUpdated$ as Source<[string, BookModel]>, // https://state-adapt.github.io/docs/rxjs#source
       removeBooksOne: bookDeleted$,
-    });
-  },
-});
+    };
+  }
+);

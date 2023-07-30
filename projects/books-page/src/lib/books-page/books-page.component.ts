@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { BooksPageActions } from '@book-co/books-page/actions';
-import { BooksStore } from '@book-co/shared-state-books';
+import { injectBooksStore } from '@book-co/shared-state-books';
 
 @Component({
   selector: 'bco-books-page',
@@ -8,7 +8,7 @@ import { BooksStore } from '@book-co/shared-state-books';
   styleUrls: ['./books-page.component.scss'],
 })
 export class BooksPageComponent {
-  store = inject(BooksStore);
+  store = injectBooksStore();
 
   isLoading$ = this.store.isLoading$;
   error$ = this.store.error$;

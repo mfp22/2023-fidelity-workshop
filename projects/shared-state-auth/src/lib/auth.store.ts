@@ -1,6 +1,6 @@
 import { createAdapter } from '@state-adapt/core';
 import { InjectionToken, inject } from '@angular/core';
-import { adapt } from '@state-adapt/angular';
+import { adapt, adaptInjectable } from '@state-adapt/angular';
 
 import { UserModel } from '@book-co/shared-models';
 import { LoginPageActions, UserDropdownActions } from '@book-co/auth/actions';
@@ -53,9 +53,10 @@ export const adapter = createAdapter<State>()({
   },
 });
 
-export const AuthStore = new InjectionToken('AuthStore', {
-  providedIn: 'root',
-  factory: () => {
+// https://state-adapt.github.io/angular/docs/angular#adaptinjectable
+export const injectAuthStore = adaptInjectable(
+  ['auth', initialState, adapter],
+  () => {
     const auth = inject(AuthService);
 
     const user$ = auth.getStatus().pipe(toSource('user$')); // https://state-adapt.github.io/docs/rxjs#tosource
@@ -73,13 +74,12 @@ export const AuthStore = new InjectionToken('AuthStore', {
       toSource('logoutSuccess$') // https://state-adapt.github.io/docs/rxjs#tosource
     );
 
-    // https://state-adapt.github.io/angular/docs/angular#adapt
-    return adapt(['auth', initialState, adapter], {
+    return {
       logIn: LoginPageActions.login$,
       logOut: UserDropdownActions.logout$,
       receiveUser: [user$, loginRequest.success$],
       receiveError: loginRequest.error$,
       noop: logoutSuccess$,
-    });
-  },
-});
+    };
+  }
+);

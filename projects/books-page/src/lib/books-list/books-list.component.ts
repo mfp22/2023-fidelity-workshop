@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { BookModel } from '@book-co/shared-models';
-import { injectBooksListStore } from './books-list.store';
+import { BooksListStateService } from './books-list.store';
 
 @Component({
   selector: 'bco-books-list',
@@ -11,5 +11,5 @@ export class BooksListComponent {
   @Input() books: BookModel[] | null = [];
   @Output() select = new EventEmitter();
   @Output() delete = new EventEmitter();
-  store = injectBooksListStore();
+  store = inject(BooksListStateService).store;
 }

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { injectAuthStore } from '@book-co/shared-state-auth';
+import { Component, inject } from '@angular/core';
+import { AuthStateService } from '@book-co/shared-state-auth';
 import { LoginPageActions } from '@book-co/auth/actions';
 
 @Component({
@@ -8,7 +8,7 @@ import { LoginPageActions } from '@book-co/auth/actions';
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  store = injectAuthStore();
+  store = inject(AuthStateService).store;
 
   gettingStatus$ = this.store.gettingStatus$;
   user$ = this.store.user$;

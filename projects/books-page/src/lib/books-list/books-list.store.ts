@@ -16,7 +16,7 @@ import {
 } from '@book-co/shared-models';
 // import { selectAllBooks } from '@book-co/shared-state-books';
 import { createAdapter, joinAdapters } from '@state-adapt/core';
-import { adapt, adaptInjectable } from '@state-adapt/angular';
+import { adapt } from '@state-adapt/angular';
 
 export interface State {
   sortOrder: BookSortOrder;
@@ -33,7 +33,7 @@ const adapter = joinAdapters<State>()({
   sortProp: createAdapter<BookSortProp>()({}),
 })();
 
-export const injectBooksListStore = adaptInjectable(
-  ['booksList', initialState],
-  adapter
-);
+@Injectable({ providedIn: 'root' })
+export class BooksListStateService {
+  store = adapt(initialState, adapter);
+}

@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserDropdownActions } from '@book-co/auth/actions';
-import { injectAuthStore } from '@book-co/shared-state-auth';
+import { AuthStateService } from '@book-co/shared-state-auth';
 
 @Component({
   selector: 'bco-user-dropdown',
@@ -8,7 +8,7 @@ import { injectAuthStore } from '@book-co/shared-state-auth';
   styleUrls: ['./user-dropdown.component.scss'],
 })
 export class UserDropdownComponent {
-  store = injectAuthStore();
+  store = inject(AuthStateService).store;
 
   user$ = this.store.user$;
 
